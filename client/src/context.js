@@ -25,7 +25,7 @@ const reducer = (prevState , action) => {
 
 export class Provider extends Component {
     
-    state={
+    state={ 
 
         todos: [ ],
         
