@@ -1,47 +1,56 @@
-import React, { Component } from 'react'
-import { Consumer } from '../context'
-import axios from "axios"
+import React, { Component } from "react";
+import { Consumer } from "../context";
+import axios from "axios";
+import uuid from "uuid";
+
 export default class Addtodo extends Component {
+  state = {
+    id: uuid(),
+    title: "",
+    complete: false //use UUID to auto increment **********************************************
+  };
 
-    state = {
-        id:4, title: "", complete: false          //use UUID to auto increment **********************************************
-    }
+  update = e => {
+    this.setState({
+      title: e.target.value
+    });
+  };
 
-    update = (e) => {
-        this.setState({
-            title: e.target.value
-        })
-    }
+  add = (dispatch, e) => {
+    e.preventDefault();
+    const newTodo = this.state;
+    axios
+      .post("/todos", newTodo)
+      .then(res => dispatch({ type: "ADD", payload: res.data }));
 
+    this.setState({ title: "" });
+  };
 
-add=(dispatch,e)=> {
+  render() {
+    return (
+      <Consumer>
+        {value => {
+          const { dispatch } = value;
 
-    e.preventDefault()
-    const newTodo = this.state
-    axios.post("/todos" , newTodo)
-.then(res=> dispatch({type:"ADD" , payload:res.data} ))
-
-    
-    this.setState({title:""})
-}
-
-    render() {
-        return (
-
-            <Consumer>{value => {
-
-                const  {dispatch} = value
-
-                return <form onSubmit={this.add.bind(this, dispatch )}>
-                    <input type="text" className="form-control rounded-0" placeholder="Your List Here"
-                        onChange={this.update} value={this.state.title} ></input>
-                    <button className="form-control rounded-0 btn-secondary" type="submit">Add </button>
-                </form>
-
-            }}</Consumer>
-
-
-
-        )
-    }
+          return (
+            <form onSubmit={this.add.bind(this, dispatch)}>
+              <input
+                type="text"
+                className="form-control rounded-0"
+                placeholder="Your List Here"
+                onChange={this.update}
+                value={this.state.title}
+              ></input>
+              <button
+                className="form-control rounded-0 btn-secondary"
+                type="submit"
+              >
+                Add{" "}
+              </button>
+            </form>
+          );
+        }}
+      </Consumer>
+    );
+  }
 }
